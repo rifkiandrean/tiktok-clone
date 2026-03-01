@@ -236,10 +236,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
   };
 
   const updateBalance = async (newBalance: number) => {
-    if (!user) return;
+    if (!user) {
+      console.error("User not logged in");
+      return;
+    }
     try {
       const userRef = doc(db, 'users', user.uid);
-      await updateDoc(userRef, { balance: newBalance });
+      // Use setDoc with merge to create the document if it doesn't exist
+      await setDoc(userRef, { balance: newBalance }, { merge: true });
     } catch (error) {
       console.error("Error updating balance:", error);
       throw error;

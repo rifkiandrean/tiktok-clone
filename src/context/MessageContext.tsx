@@ -31,6 +31,7 @@ interface MessageContextType {
   markAsRead: (id: string) => void;
   getMessage: (id: string) => Message | undefined;
   seedData: () => Promise<void>;
+  sendMessage: (threadId: string, text: string) => Promise<void>;
 }
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined);
@@ -161,8 +162,30 @@ export function MessageProvider({ children }: { children: ReactNode }) {
 
   const getMessage = useCallback((id: string) => messages.find(m => m.id === id), [messages]);
 
+  const sendMessage = async (threadId: string, text: string) => {
+    if (!user) return;
+    try {
+      // In a real app, you would add to a subcollection 'messages' inside the thread
+      // For this simple version, we'll just update the subtitle of the thread to show the latest message
+      const ref = doc(db, 'users', user.uid, 'threads', threadId);
+      await updateDoc(ref, { 
+        subtitle: `Anda: ${text}`,
+        timestamp: new Date().toISOString(),
+        read: true
+      });
+      
+      // Optimistic update for UI
+      setMessages(prev => prev.map(msg => 
+        msg.id === threadId ? { ...msg, subtitle: `Anda: ${text}` } : msg
+      ));
+    } catch (e) {
+      console.error("Error sending message", e);
+      throw e;
+    }
+  };
+
   return (
-    <MessageContext.Provider value={{ messages, unreadCount, markAsRead, getMessage, seedData }}>
+    <MessageContext.Provider value={{ messages, unreadCount, markAsRead, getMessage, seedData, sendMessage }}>
       {children}
     </MessageContext.Provider>
   );

@@ -1,19 +1,31 @@
-import { ArrowLeft, MoreHorizontal, Phone, Video } from 'lucide-react';
+import { ArrowLeft, MoreHorizontal, Phone, Video, Send } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMessages } from '../context/MessageContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function MessageDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getMessage, markAsRead } = useMessages();
+  const { getMessage, markAsRead, sendMessage } = useMessages();
   const message = getMessage(id || '');
+  const [inputText, setInputText] = useState('');
+  const [localMessages, setLocalMessages] = useState<string[]>([]);
 
   useEffect(() => {
     if (id) {
       markAsRead(id);
     }
   }, [id, markAsRead]);
+
+  const handleSend = async () => {
+    if (!inputText.trim() || !id) return;
+    
+    const text = inputText;
+    setInputText('');
+    setLocalMessages(prev => [...prev, text]);
+    
+    await sendMessage(id, text);
+  };
 
   if (!message) {
     return <div className="p-4">Pesan tidak ditemukan</div>;
@@ -73,6 +85,15 @@ export default function MessageDetail() {
               Oke siap, saya checkout sekarang ya.
             </div>
           </div>
+
+          {/* New Local Messages */}
+          {localMessages.map((msg, idx) => (
+            <div key={idx} className="flex justify-end animate-in slide-in-from-bottom-2 duration-300">
+              <div className="bg-cyan-100 px-4 py-2 rounded-2xl rounded-tr-sm max-w-[80%] text-sm">
+                {msg}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -80,10 +101,19 @@ export default function MessageDetail() {
       <div className="p-3 bg-white border-t border-gray-100 flex items-center gap-3">
         <input 
           type="text" 
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Kirim pesan..." 
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none"
         />
-        <button className="text-cyan-500 font-bold text-sm">Kirim</button>
+        <button 
+          onClick={handleSend}
+          disabled={!inputText.trim()}
+          className="text-cyan-500 font-bold text-sm disabled:opacity-50"
+        >
+          <Send size={20} />
+        </button>
       </div>
     </div>
   );

@@ -10,17 +10,32 @@ import {
   Heart, 
   ChevronDown,
   Store,
-  ChevronRight
+  ChevronRight,
+  LogOut,
+  Database
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
 import { useState } from 'react';
 import PullToRefresh from '../components/PullToRefresh';
+import { useAuth } from '../context/AuthContext';
+import { useMessages } from '../context/MessageContext';
 
 export default function Profile() {
+  const { user, signInWithGoogle, logout } = useAuth();
+  const { seedData } = useMessages();
+  const [seeding, setSeeding] = useState(false);
+
   const handleRefresh = async () => {
     // Simulate network request
     await new Promise(resolve => setTimeout(resolve, 2000));
+  };
+
+  const handleSeed = async () => {
+    setSeeding(true);
+    await seedData();
+    setSeeding(false);
+    alert('Data seeded successfully!');
   };
 
   return (
@@ -34,13 +49,13 @@ export default function Profile() {
           </div>
           <div className="flex items-center gap-1 font-semibold text-lg">
             <div className="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-white text-xs font-bold">P</div>
-            <span>Goods Produk</span>
+            <span>{user ? user.displayName : 'Goods Produk'}</span>
             <ChevronDown size={16} />
           </div>
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="w-6 h-6 rounded-full overflow-hidden border border-gray-200">
-                <img src="https://picsum.photos/seed/user/100/100" alt="Viewer" className="w-full h-full object-cover" />
+                <img src={user?.photoURL || "https://picsum.photos/seed/user/100/100"} alt="Viewer" className="w-full h-full object-cover" />
               </div>
               <span className="absolute -bottom-1 -right-1 bg-gray-100 text-[10px] px-1 rounded-full border border-white">79</span>
             </div>
@@ -54,10 +69,14 @@ export default function Profile() {
           <div className="flex items-start justify-between mb-4">
             <div className="relative">
               <div className="w-20 h-20 rounded-full border border-gray-200 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gray-900 flex items-center justify-center text-white font-bold text-xs text-center leading-tight p-1">
-                  <span className="text-orange-500 text-2xl block">G</span>
-                  GOODS<br/>PRODUK
-                </div>
+                {user?.photoURL ? (
+                  <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 bg-gray-900 flex items-center justify-center text-white font-bold text-xs text-center leading-tight p-1">
+                    <span className="text-orange-500 text-2xl block">G</span>
+                    GOODS<br/>PRODUK
+                  </div>
+                )}
               </div>
               <div className="absolute -bottom-1 right-0 bg-cyan-400 text-white p-1 rounded-full border-2 border-white">
                 <Plus size={14} strokeWidth={3} />
@@ -70,15 +89,24 @@ export default function Profile() {
 
             <div className="flex-1 ml-4">
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-xl font-bold">Goods Produk</h1>
+                <h1 className="text-xl font-bold">{user ? user.displayName : 'Goods Produk'}</h1>
                 <span className="bg-pink-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold">9+</span>
               </div>
-              <p className="text-sm text-gray-500">@sidolarispangandaran</p>
+              <p className="text-sm text-gray-500">{user ? user.email : '@sidolarispangandaran'}</p>
               
-              <div className="mt-3">
-                <button className="bg-gray-100 text-black font-semibold px-6 py-2 rounded-lg text-sm w-24">
+              <div className="mt-3 flex gap-2">
+                <button className="bg-gray-100 text-black font-semibold px-6 py-2 rounded-lg text-sm flex-1">
                   Edit
                 </button>
+                {!user ? (
+                  <button onClick={signInWithGoogle} className="bg-pink-500 text-white font-semibold px-4 py-2 rounded-lg text-sm">
+                    Login
+                  </button>
+                ) : (
+                  <button onClick={logout} className="bg-gray-100 text-black p-2 rounded-lg">
+                    <LogOut size={20} />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -107,6 +135,16 @@ export default function Profile() {
 
           {/* Action Tabs */}
           <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-2">
+            {user && (
+              <button 
+                onClick={handleSeed} 
+                disabled={seeding}
+                className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap border border-gray-100"
+              >
+                <span className="text-blue-500"><Database size={14} /></span>
+                {seeding ? 'Seeding...' : 'Seed Inbox Data'}
+              </button>
+            )}
             <button className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap border border-gray-100">
               <span className="text-pink-500"><UserPlus size={14} /></span>
               TikTok Studio

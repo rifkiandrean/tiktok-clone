@@ -8,9 +8,15 @@ import {
   Plus
 } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
-import { useState } from 'react';
+import { useMessages } from '../context/MessageContext';
+import { Link } from 'react-router-dom';
 
 export default function Inbox() {
+  const { messages } = useMessages();
+  
+  const notifications = messages.filter(m => m.type === 'notification');
+  const chats = messages.filter(m => m.type === 'chat');
+
   return (
     <>
       <div className="min-h-screen bg-white font-sans pb-20">
@@ -80,55 +86,54 @@ export default function Inbox() {
 
         {/* Notification List */}
         <div className="mt-2">
-          <NotificationItem 
-            icon={<Users size={24} className="text-white fill-white" />}
-            bg="bg-cyan-500"
-            title="Pengikut baru"
-            subtitle="mania bus adit mulai mengikuti ..."
-            badge="1"
-          />
-          <NotificationItem 
-            icon={<Heart size={24} className="text-white fill-white" />}
-            bg="bg-pink-500"
-            title="Aktivitas"
-            subtitle={<span>Rhm⁉️ menyukai komentar Anda.</span>}
-            badge="5"
-          />
-          <NotificationItem 
-            icon={<div className="w-6 h-4 bg-white rounded-sm border-2 border-white"></div>} // Custom drawer icon approximation
-            bg="bg-slate-900"
-            title="Notifikasi sistem"
-            subtitle="Asisten Promosi: Dapatkan r... · 17 j"
-            badge={null}
-          />
+          <Link to="/notifications/followers">
+            <NotificationItem 
+              icon={<Users size={24} className="text-white fill-white" />}
+              bg="bg-cyan-500"
+              title="Pengikut baru"
+              subtitle="mania bus adit mulai mengikuti ..."
+              badge={notifications.find(n => n.title === 'Pengikut baru')?.badge}
+            />
+          </Link>
+          <Link to="/notifications/activity">
+            <NotificationItem 
+              icon={<Heart size={24} className="text-white fill-white" />}
+              bg="bg-pink-500"
+              title="Aktivitas"
+              subtitle={<span>Rhm⁉️ menyukai komentar Anda.</span>}
+              badge={notifications.find(n => n.title === 'Aktivitas')?.badge}
+            />
+          </Link>
+          <Link to="/notifications/system">
+            <NotificationItem 
+              icon={<div className="w-6 h-4 bg-white rounded-sm border-2 border-white"></div>} 
+              bg="bg-slate-900"
+              title="Notifikasi sistem"
+              subtitle="Asisten Promosi: Dapatkan r... · 17 j"
+              badge={notifications.find(n => n.title === 'Notifikasi sistem')?.badge}
+            />
+          </Link>
         </div>
 
         {/* Chat List */}
         <div className="mt-2">
-          <ChatItem 
-            img="https://picsum.photos/seed/couple/100/100"
-            name="Ayy"
-            message="Dikirim kemarin"
-            rightElement={<Camera size={20} className="text-gray-400" />}
-          />
-          <ChatItem 
-            img="https://picsum.photos/seed/girl2/100/100"
-            name="Straubabyes🖤"
-            message="Dikirim kemarin"
-            rightElement={null}
-          />
-          <ChatItem 
-            img="https://picsum.photos/seed/wedding/100/100"
-            name="NitaaaSwh"
-            message="Dikirim kemarin"
-            rightElement={<Camera size={20} className="text-gray-400" />}
-          />
-          <ChatItem 
-            img="https://picsum.photos/seed/woman/100/100"
-            name="Deka44"
-            message={<span className="text-black font-medium">Dilihat</span>}
-            rightElement={<div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>}
-          />
+          {chats.map(chat => (
+            <Link to={`/message/${chat.id}`} key={chat.id}>
+              <ChatItem 
+                img={chat.img}
+                name={chat.title}
+                message={chat.subtitle}
+                rightElement={chat.badge ? (
+                  <div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    {chat.badge}
+                  </div>
+                ) : (
+                  <Camera size={20} className="text-gray-400" />
+                )}
+                isRead={chat.read}
+              />
+            </Link>
+          ))}
         </div>
       </div>
     <BottomNav />
@@ -146,7 +151,7 @@ function NotificationItem({ icon, bg, title, subtitle, badge }: any) {
         <h3 className="font-bold text-sm mb-0.5">{title}</h3>
         <p className="text-sm text-gray-600 truncate">{subtitle}</p>
       </div>
-      {badge && (
+      {badge > 0 && (
         <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
           {badge}
         </div>
@@ -155,15 +160,15 @@ function NotificationItem({ icon, bg, title, subtitle, badge }: any) {
   );
 }
 
-function ChatItem({ img, name, message, rightElement }: any) {
+function ChatItem({ img, name, message, rightElement, isRead }: any) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 active:bg-gray-50">
+    <div className={`flex items-center gap-3 px-4 py-3 active:bg-gray-50 ${!isRead ? 'bg-gray-50' : ''}`}>
       <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
         <img src={img} alt={name} className="w-full h-full object-cover" />
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-sm mb-0.5">{name}</h3>
-        <p className="text-sm text-gray-500 truncate">{message}</p>
+        <h3 className={`font-semibold text-sm mb-0.5 ${!isRead ? 'text-black' : 'text-gray-900'}`}>{name}</h3>
+        <p className={`text-sm truncate ${!isRead ? 'text-black font-medium' : 'text-gray-500'}`}>{message}</p>
       </div>
       {rightElement && (
         <div className="flex-shrink-0">

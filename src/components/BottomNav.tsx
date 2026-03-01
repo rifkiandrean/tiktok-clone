@@ -1,9 +1,11 @@
 import { Home, ShoppingBag, PlusSquare, MessageSquare, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useMessages } from '../context/MessageContext';
 
 export default function BottomNav() {
   const location = useLocation();
   const path = location.pathname;
+  const { unreadCount } = useMessages();
 
   const isActive = (p: string) => path === p;
 
@@ -28,7 +30,11 @@ export default function BottomNav() {
       <Link to="/inbox" className={`flex flex-col items-center gap-1 ${isActive('/inbox') ? 'text-black' : 'text-gray-500'}`}>
         <div className="relative">
           <MessageSquare size={24} strokeWidth={isActive('/inbox') ? 2.5 : 2} />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1 rounded-full min-w-[16px] text-center">7</span>
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1 rounded-full min-w-[16px] text-center">
+              {unreadCount}
+            </span>
+          )}
         </div>
         <span className="text-[10px] font-medium">Kotak Masuk</span>
       </Link>

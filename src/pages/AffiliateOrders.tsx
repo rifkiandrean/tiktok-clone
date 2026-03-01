@@ -10,8 +10,11 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PullToRefresh from '../components/PullToRefresh';
+import { useData } from '../context/DataContext';
 
 export default function AffiliateOrders() {
+  const { orders } = useData();
+
   const handleRefresh = async () => {
     // Simulate network request
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -67,37 +70,13 @@ export default function AffiliateOrders() {
 
         {/* Order List */}
         <div className="flex flex-col gap-2 mt-2">
-          {/* Order Item 1 - Completed */}
-          <OrderItem 
-            id="581876960151504885"
-            status="Selesai"
-            statusColor="bg-black text-white"
-            productName="FYC Yessica's Tea Tree & Strawb..."
-            price="Rp24.500"
-            quantity={1}
-            videoTitle="Memang salah pasang harga kalo segini mah. Ma..."
-            commissionPercent="3%"
-            estCommission="Rp735"
-            estBase="Rp24.500"
-            actualCommission="Rp735"
-            actualBase="Rp24.500"
-          />
-
-          {/* Order Item 2 - Not Eligible */}
-          <OrderItem 
-            id="581858686429267955"
-            status="Tidak memenuhi s..."
-            statusColor="bg-gray-100 text-gray-500"
-            productName="FYC Yessica's Tea Tree & Strawb..."
-            price="Rp24.470"
-            quantity={1}
-            videoTitle="Memang salah pasang harga kalo segini mah. Ma..."
-            commissionPercent="3%"
-            estCommission="Rp734"
-            estBase="Rp24.470"
-            actualCommission="Rp0"
-            actualBase="Rp0"
-          />
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <OrderItem key={order.id} {...order} />
+            ))
+          ) : (
+            <div className="p-10 text-center text-gray-500">Belum ada pesanan</div>
+          )}
         </div>
       </div>
     </PullToRefresh>

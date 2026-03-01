@@ -22,6 +22,7 @@ import BottomNav from './components/BottomNav';
 import PullToRefresh from './components/PullToRefresh';
 import { MessageProvider } from './context/MessageContext';
 import { AuthProvider } from './context/AuthContext';
+import { DataProvider } from './context/DataContext';
 
 // Placeholder components for other routes
 const Placeholder = ({ title }: { title: string }) => {
@@ -41,31 +42,33 @@ const Placeholder = ({ title }: { title: string }) => {
 export default function App() {
   return (
     <AuthProvider>
-      <MessageProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/profile" replace />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/affiliate-center" element={<AffiliateCenter />} />
-            <Route path="/earnings" element={<Earnings />} />
-            <Route path="/earnings-history" element={<EarningsHistory />} />
-            <Route path="/affiliate-orders" element={<AffiliateOrders />} />
-            <Route path="/withdraw" element={<Withdraw />} />
-            <Route path="/inbox" element={<Inbox />} />
-            <Route path="/message/:id" element={<MessageDetail />} />
-            <Route path="/notifications/:type" element={<NotificationList />} />
-            <Route path="/affiliate-commission-rules" element={<AffiliateCommissionRules />} />
-            <Route path="/toolkit" element={<Toolkit />} />
-            <Route path="/promote" element={<Promote />} />
-            <Route path="/results-overview" element={<ResultsOverview />} />
-            <Route path="/notifications" element={<Notifications />} />
-            
-            {/* Placeholders */}
-            <Route path="/shop" element={<Placeholder title="Toko" />} />
-            <Route path="/manage-products" element={<Placeholder title="Kelola Produk" />} />
-          </Routes>
-        </BrowserRouter>
-      </MessageProvider>
+      <DataProvider>
+        <MessageProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Navigate to="/profile" replace />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/affiliate-center" element={<AffiliateCenter />} />
+              <Route path="/earnings" element={<Earnings />} />
+              <Route path="/earnings-history" element={<EarningsHistory />} />
+              <Route path="/affiliate-orders" element={<AffiliateOrders />} />
+              <Route path="/withdraw" element={<Withdraw />} />
+              <Route path="/inbox" element={<Inbox />} />
+              <Route path="/message/:id" element={<MessageDetail />} />
+              <Route path="/notifications/:type" element={<NotificationList />} />
+              <Route path="/affiliate-commission-rules" element={<AffiliateCommissionRules />} />
+              <Route path="/toolkit" element={<Toolkit />} />
+              <Route path="/promote" element={<Promote />} />
+              <Route path="/results-overview" element={<ResultsOverview />} />
+              <Route path="/notifications" element={<Notifications />} />
+              
+              {/* Placeholders */}
+              <Route path="/shop" element={<Placeholder title="Toko" />} />
+              <Route path="/manage-products" element={<Placeholder title="Kelola Produk" />} />
+            </Routes>
+          </BrowserRouter>
+        </MessageProvider>
+      </DataProvider>
     </AuthProvider>
   );
 }

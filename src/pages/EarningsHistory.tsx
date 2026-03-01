@@ -8,9 +8,11 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useMemo } from 'react';
+import { useData } from '../context/DataContext';
 
 export default function EarningsHistory() {
   const navigate = useNavigate();
+  const { transactions } = useData();
   const [activeTab, setActiveTab] = useState('Pendapatan harian');
   const [showFilter, setShowFilter] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null); // null = All year
@@ -27,37 +29,10 @@ export default function EarningsHistory() {
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ];
 
-  const allTransactions = useMemo(() => {
-    const data = [];
-    const endDate = new Date('2026-02-28T12:00:00');
-    const startDate = new Date('2024-01-14T12:00:00');
-    
-    let currentDate = new Date(endDate);
-    let id = 1;
-
-    while (currentDate >= startDate) {
-      const items = Math.floor(Math.random() * (10000 - 654 + 1)) + 654;
-      const earningsPerItem = Math.floor(Math.random() * (1500 - 500 + 1)) + 500;
-      const amount = items * earningsPerItem;
-
-      data.push({
-        id: id++,
-        dateStr: currentDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-        monthIndex: currentDate.getMonth(),
-        year: currentDate.getFullYear(),
-        amount: amount,
-        items: items
-      });
-
-      currentDate.setDate(currentDate.getDate() - 1);
-    }
-    return data;
-  }, []);
-
   const filteredTransactions = useMemo(() => {
-    if (selectedMonth === null) return allTransactions;
-    return allTransactions.filter(t => t.monthIndex === selectedMonth);
-  }, [allTransactions, selectedMonth]);
+    if (selectedMonth === null) return transactions;
+    return transactions.filter(t => t.monthIndex === selectedMonth);
+  }, [transactions, selectedMonth]);
 
   const dateRangeText = useMemo(() => {
     if (selectedMonth === null) return "14 Januari 2024 - 28 Februari 2026";

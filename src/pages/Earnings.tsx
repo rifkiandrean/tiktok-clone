@@ -8,8 +8,11 @@ import {
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import PullToRefresh from '../components/PullToRefresh';
+import { useData } from '../context/DataContext';
 
 export default function Earnings() {
+  const { balance } = useData();
+
   const handleRefresh = async () => {
     // Simulate network request
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -34,7 +37,7 @@ export default function Earnings() {
         <div className="px-4 pt-8 pb-4 text-center">
           <h2 className="text-sm font-medium text-gray-900 mb-2">Saldo tersedia</h2>
           <Link to="/earnings-history" className="flex items-center justify-center gap-1 mb-6">
-            <span className="text-4xl font-bold">Rp487.922.000</span>
+            <span className="text-4xl font-bold">Rp{balance.toLocaleString('id-ID')}</span>
             <ChevronRight size={24} strokeWidth={2.5} />
           </Link>
 

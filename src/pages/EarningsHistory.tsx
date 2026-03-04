@@ -48,7 +48,12 @@ export default function EarningsHistory() {
       filtered = filtered.filter(t => t.monthIndex === selectedMonth);
     }
     
-    return filtered;
+    // Sort by date descending (latest first)
+    return [...filtered].sort((a, b) => {
+      if (a.date < b.date) return 1;
+      if (a.date > b.date) return -1;
+      return 0;
+    });
   }, [transactions, selectedMonth, activeTab]);
 
   const dateRangeText = useMemo(() => {

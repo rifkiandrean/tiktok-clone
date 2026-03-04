@@ -30,9 +30,26 @@ export default function EarningsHistory() {
   ];
 
   const filteredTransactions = useMemo(() => {
-    if (selectedMonth === null) return transactions;
-    return transactions.filter(t => t.monthIndex === selectedMonth);
-  }, [transactions, selectedMonth]);
+    let filtered = transactions;
+
+    // Filter by Tab
+    if (activeTab === 'Pendapatan harian') {
+      filtered = filtered.filter(t => t.type === 'daily_income');
+    } else if (activeTab === 'Penarikan') {
+      filtered = filtered.filter(t => t.type === 'withdrawal');
+    } else if (activeTab === 'Pelanggaran') {
+      filtered = filtered.filter(t => t.type === 'violation');
+    } else if (activeTab === 'Reward') {
+      filtered = filtered.filter(t => t.type === 'reward');
+    }
+
+    // Filter by Month
+    if (selectedMonth !== null) {
+      filtered = filtered.filter(t => t.monthIndex === selectedMonth);
+    }
+    
+    return filtered;
+  }, [transactions, selectedMonth, activeTab]);
 
   const dateRangeText = useMemo(() => {
     if (selectedMonth === null) return "14 Januari 2024 - 28 Februari 2026";
@@ -90,8 +107,15 @@ export default function EarningsHistory() {
                   
                   <div className="flex items-center gap-2">
                     <div className="text-right">
-                      <div className="font-bold text-base">Rp{item.amount.toLocaleString('id-ID')}</div>
-                      <div className="text-xs text-gray-500">{item.items.toLocaleString('id-ID')} item</div>
+                      <div className={`font-bold text-base ${item.type === 'withdrawal' ? 'text-red-600' : 'text-black'}`}>
+                        {item.type === 'withdrawal' ? '-' : ''}Rp{item.amount.toLocaleString('id-ID')}
+                      </div>
+                      {item.type === 'daily_income' && (
+                        <div className="text-xs text-gray-500">{item.items.toLocaleString('id-ID')} item</div>
+                      )}
+                      {item.type === 'withdrawal' && (
+                        <div className="text-xs text-gray-500">Berhasil</div>
+                      )}
                     </div>
                     <ChevronRight size={16} className="text-gray-400" />
                   </div>

@@ -58,7 +58,7 @@ interface DataContextType {
   loading: boolean;
   seedAllData: () => Promise<void>;
   updateBalance: (newBalance: number) => Promise<void>;
-  addTransaction: (date: Date, amount: number, items: number) => Promise<void>;
+  addTransaction: (date: Date, amount: number, items: number, type?: 'daily_income' | 'withdrawal') => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -252,24 +252,50 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addTransaction = async (date: Date, amount: number, items: number) => {
+  const addTransaction = async (date: Date, amount: number, items: number, type: 'daily_income' | 'withdrawal' = 'daily_income') => {
     if (!user) return;
     try {
       const id = date.toISOString().split('T')[0]; // Use YYYY-MM-DD as ID
+      // If adding multiple transactions per day (e.g. withdrawal + income), ID needs to be unique or we overwrite.
+      // The current implementation overwrites. 
+      // For "Atur Riwayat" (Manage History), overwriting daily_income makes sense (correcting data).
+      // For "Penarikan" (Withdrawal), it might be a separate event on the same day.
+      // However, the user request implies "Atur Riwayat" style filling.
+      // If we use the same ID (date), a withdrawal will overwrite the income for that day if we are not careful.
+      // But usually withdrawals are separate documents or we need a different ID strategy.
+      // Given the current simple architecture where ID = Date, we can't have both Income and Withdrawal on the same day easily without changing ID structure.
+      // Let's check how EarningsHistory displays data. It maps transactions.
+      
+      // If I change ID to `${date}_${type}`, I can support both.
+      // But `generateTransactions` uses date as ID? No, it uses `tx_${id++}`.
+      // Wait, `addTransaction` used `date.toISOString().split('T')[0]` as ID.
+      // `generateTransactions` used `tx_${id++}`.
+      // This means `addTransaction` currently overwrites any transaction with that DATE ID.
+      // If `generateTransactions` creates `tx_1` for `2026-02-28`, and `addTransaction` creates `2026-02-28`, they are distinct documents if the IDs are different strings.
+      // `generateTransactions` IDs are `tx_1`, `tx_2`...
+      // `addTransaction` IDs are `2026-03-01`.
+      // So they don't overwrite unless `addTransaction` is called twice for the same date.
+      
+      // If the user wants to add a Withdrawal, they probably want it to appear IN ADDITION to income, or instead of?
+      // "Penarikan" usually appears in the list.
+      // If I use `${dateStr}_${type}` as ID, it allows both on same day.
+      
+      const idStr = type === 'daily_income' ? date.toISOString().split('T')[0] : `${date.toISOString().split('T')[0]}_withdraw`;
+      
       const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       
       const transaction: Transaction = {
-        id,
+        id: idStr,
         dateStr,
-        date: id, // id is already YYYY-MM-DD
+        date: date.toISOString().split('T')[0],
         monthIndex: date.getMonth(),
         year: date.getFullYear(),
         amount,
         items,
-        type: 'daily_income'
+        type
       };
 
-      const txRef = doc(db, 'users', user.uid, 'transactions', id);
+      const txRef = doc(db, 'users', user.uid, 'transactions', idStr);
       await setDoc(txRef, transaction);
     } catch (error) {
       console.error("Error adding transaction:", error);

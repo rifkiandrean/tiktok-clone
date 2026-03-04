@@ -43,6 +43,7 @@ export default function Profile() {
   const [historyDate, setHistoryDate] = useState(new Date().toISOString().split('T')[0]);
   const [historyAmount, setHistoryAmount] = useState('');
   const [historyItems, setHistoryItems] = useState('');
+  const [historyType, setHistoryType] = useState<'daily_income' | 'withdrawal'>('daily_income');
 
   const handleRefresh = async () => {
     // Simulate network request
@@ -68,13 +69,14 @@ export default function Profile() {
 
   const handleAddTransaction = async () => {
     const amount = parseInt(historyAmount.replace(/[^0-9]/g, ''), 10);
-    const items = parseInt(historyItems.replace(/\./g, ''), 10);
+    const items = historyType === 'daily_income' ? parseInt(historyItems.replace(/[^0-9]/g, ''), 10) : 0;
     
-    if (historyDate && !isNaN(amount) && !isNaN(items)) {
-      await addTransaction(new Date(historyDate), amount, items);
+    if (historyDate && !isNaN(amount) && (historyType === 'withdrawal' || !isNaN(items))) {
+      await addTransaction(new Date(historyDate), amount, items, historyType);
       setShowHistoryModal(false);
       setHistoryAmount('');
       setHistoryItems('');
+      setHistoryType('daily_income');
       alert('Riwayat berhasil disimpan!');
     }
   };
@@ -359,6 +361,30 @@ export default function Profile() {
           </div>
 
           <div className="space-y-4 mb-6">
+            {/* Type Selector */}
+            <div className="flex bg-gray-100 p-1 rounded-lg mb-4">
+              <button
+                onClick={() => setHistoryType('daily_income')}
+                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  historyType === 'daily_income' 
+                    ? 'bg-white text-black shadow-sm' 
+                    : 'text-gray-500'
+                }`}
+              >
+                Pendapatan
+              </button>
+              <button
+                onClick={() => setHistoryType('withdrawal')}
+                className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  historyType === 'withdrawal' 
+                    ? 'bg-white text-black shadow-sm' 
+                    : 'text-gray-500'
+                }`}
+              >
+                Penarikan
+              </button>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Pilih Tanggal
@@ -378,7 +404,7 @@ export default function Profile() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Jumlah Penghasilan (Rp)
+                {historyType === 'daily_income' ? 'Jumlah Penghasilan (Rp)' : 'Jumlah Penarikan (Rp)'}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -397,23 +423,25 @@ export default function Profile() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Jumlah Item Terjual
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Package size={16} className="text-gray-400" />
+            {historyType === 'daily_income' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Jumlah Item Terjual
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Package size={16} className="text-gray-400" />
+                  </div>
+                  <input
+                    type="number"
+                    value={historyItems}
+                    onChange={(e) => setHistoryItems(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="0"
+                  />
                 </div>
-                <input
-                  type="number"
-                  value={historyItems}
-                  onChange={(e) => setHistoryItems(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"
-                  placeholder="0"
-                />
               </div>
-            </div>
+            )}
           </div>
 
           <button 

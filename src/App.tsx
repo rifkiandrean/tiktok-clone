@@ -18,6 +18,8 @@ import Notifications from './pages/Notifications';
 import EarningsHistory from './pages/EarningsHistory';
 import MessageDetail from './pages/MessageDetail';
 import NotificationList from './pages/NotificationList';
+import Shop from './pages/Shop';
+import ShopOrders from './pages/ShopOrders';
 import BottomNav from './components/BottomNav';
 import PullToRefresh from './components/PullToRefresh';
 import { MessageProvider } from './context/MessageContext';
@@ -62,8 +64,10 @@ export default function App() {
               <Route path="/results-overview" element={<ResultsOverview />} />
               <Route path="/notifications" element={<Notifications />} />
               
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/shop/orders" element={<ShopOrders />} />
+              
               {/* Placeholders */}
-              <Route path="/shop" element={<Placeholder title="Toko" />} />
               <Route path="/manage-products" element={<Placeholder title="Kelola Produk" />} />
             </Routes>
           </BrowserRouter>

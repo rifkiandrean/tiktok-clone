@@ -9,18 +9,58 @@ import {
   PlaySquare
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PullToRefresh from '../components/PullToRefresh';
+import { useData } from '../context/DataContext';
 
 export default function AffiliateCenter() {
   const [filter, setFilter] = useState<'today' | 'week'>('week');
+  const { transactions } = useData();
 
   const handleRefresh = async () => {
     // Simulate network request
     await new Promise(resolve => setTimeout(resolve, 2000));
   };
 
+  const stats = useMemo(() => {
+    const now = new Date();
+    // Reset time to midnight for accurate date comparison if needed, 
+    // but we are using string comparison YYYY-MM-DD which is safer for "days"
+    const todayStr = now.toISOString().split('T')[0];
+    
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(now.getDate() - 7);
+    const oneWeekAgoStr = oneWeekAgo.toISOString().split('T')[0];
+
+    let filteredTxs = transactions;
+
+    if (filter === 'today') {
+      filteredTxs = transactions.filter(t => t.date === todayStr);
+    } else {
+      // 'week' - last 7 days
+      filteredTxs = transactions.filter(t => t.date >= oneWeekAgoStr && t.date <= todayStr);
+    }
+
+    const totalCommission = filteredTxs.reduce((sum, t) => sum + t.amount, 0);
+    const totalItems = filteredTxs.reduce((sum, t) => sum + t.items, 0);
+    
+    // Estimate GMV as Commission / 5% (0.05) - just an assumption since we don't have real GMV
+    // Or we can say Commission is roughly 10%? Let's use a multiplier that makes sense.
+    // In the seed data: items * earningsPerItem. 
+    // If earningsPerItem is ~1000, and price is ~20000, that's 5%.
+    const estimatedGMV = totalCommission * 20; 
+
+    return {
+      gmv: estimatedGMV,
+      items: totalItems,
+      commission: totalCommission
+    };
+  }, [transactions, filter]);
+
   const formatCurrency = (amount: number) => {
+    if (amount >= 1000000000) {
+       return (amount / 1000000000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + 'M';
+    }
     if (amount >= 1000000) {
       return (amount / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + 'jt';
     }
@@ -78,7 +118,7 @@ export default function AffiliateCenter() {
                 GMV Teratr... <ChevronRight size={12} />
               </div>
               <div className="text-xl font-bold">
-                {filter === 'today' ? formatCurrency(2000000) : formatCurrency(2450000)}
+                {formatCurrency(stats.gmv)}
               </div>
             </div>
             <div>
@@ -86,7 +126,7 @@ export default function AffiliateCenter() {
                 Produk terj... <ChevronRight size={12} />
               </div>
               <div className="text-xl font-bold">
-                {filter === 'today' ? '5.390' : '12.878'}
+                {stats.items.toLocaleString('id-ID')}
               </div>
             </div>
             <div>
@@ -94,7 +134,7 @@ export default function AffiliateCenter() {
                 Perkiraan k... <ChevronRight size={12} />
               </div>
               <div className="text-xl font-bold">
-                {filter === 'today' ? formatCurrency(5390 * 500) : formatCurrency(12878 * 500)}
+                {formatCurrency(stats.commission)}
               </div>
             </div>
           </div>

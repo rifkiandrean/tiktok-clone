@@ -26,6 +26,7 @@ export interface UserProfile {
 export interface Transaction {
   id: string;
   dateStr: string;
+  date: string; // YYYY-MM-DD
   monthIndex: number;
   year: number;
   amount: number;
@@ -139,6 +140,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       data.push({
         id: `tx_${id++}`,
         dateStr: currentDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        date: currentDate.toISOString().split('T')[0],
         monthIndex: currentDate.getMonth(),
         year: currentDate.getFullYear(),
         amount: amount,
@@ -259,6 +261,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const transaction: Transaction = {
         id,
         dateStr,
+        date: id, // id is already YYYY-MM-DD
         monthIndex: date.getMonth(),
         year: date.getFullYear(),
         amount,

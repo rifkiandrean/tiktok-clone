@@ -1,450 +1,411 @@
 import { 
   ArrowLeft, 
-  ShoppingBag, 
-  Link as LinkIcon, 
-  ChevronRight, 
   Info, 
-  Flame,
-  Play,
+  ChevronRight, 
+  ShoppingBag, 
+  Globe, 
+  ThumbsUp, 
+  Wallet, 
+  CreditCard,
   CheckCircle2,
-  ChevronDown,
-  ArrowUpCircle,
-  Ticket,
-  User,
-  FileText,
-  Video as VideoIcon,
-  Wallet,
-  Clock
+  Circle,
+  Moon,
+  Star,
+  Pencil,
+  Landmark
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import PullToRefresh from '../components/PullToRefresh';
 
 export default function Promote() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'create' | 'dashboard' | 'mine'>('create');
+  const [activeTab, setActiveTab] = useState('Buat');
+  const [targetTab, setTargetTab] = useState('Dapatkan penjualan');
+  const [selectedGoal, setSelectedGoal] = useState('product');
+  const [selectedVideo, setSelectedVideo] = useState(0);
+  const [audience, setAudience] = useState('default');
+  const [budget, setBudget] = useState(86460);
+  const [duration, setDuration] = useState(1);
+  const [agreed, setAgreed] = useState(false);
 
-  const handleRefresh = async () => {
-    // Simulate network request
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  };
+  // Constants
+  const VAT_RATE = 0.11;
+  const vat = Math.round(budget * duration * VAT_RATE);
+  const total = (budget * duration) + vat;
 
-  return (
-    <>
-    <PullToRefresh onRefresh={handleRefresh}>
-      <div className="min-h-screen bg-gray-50 font-sans pb-24">
-        {/* Header */}
-        <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
-          <div className="flex items-center px-4 py-3 relative">
-            <button onClick={() => navigate(-1)} className="p-1 -ml-1 absolute left-4">
-              <ArrowLeft size={24} />
-            </button>
-            <h1 className="text-lg font-bold w-full text-center">Promosi</h1>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex text-sm font-medium">
-            <button 
-              onClick={() => setActiveTab('create')}
-              className={`flex-1 py-3 relative ${activeTab === 'create' ? 'text-black border-b-2 border-black' : 'text-gray-500'}`}
-            >
-              Buat
-            </button>
-            <button 
-              onClick={() => setActiveTab('dashboard')}
-              className={`flex-1 py-3 relative ${activeTab === 'dashboard' ? 'text-black border-b-2 border-black' : 'text-gray-500'}`}
-            >
-              Dasbor
-            </button>
-            <button 
-              onClick={() => setActiveTab('mine')}
-              className={`flex-1 py-3 relative ${activeTab === 'mine' ? 'text-black border-b-2 border-black' : 'text-gray-500'}`}
-            >
-              Milik Saya
-              <span className="absolute top-3 right-4 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-          </div>
-        </header>
-
-        {activeTab === 'create' && <CreateTabContent />}
-        {activeTab === 'dashboard' && <DashboardTabContent />}
-        {activeTab === 'mine' && <MineTabContent />}
-      </div>
-    </PullToRefresh>
-    {activeTab === 'create' && <CreateTabFooter />}
-    </>
-  );
-}
-
-function CreateTabContent() {
-  const [selectedTarget, setSelectedTarget] = useState('sales');
-  const [selectedGoal, setSelectedGoal] = useState('product_purchase');
-  const [selectedAd, setSelectedAd] = useState(0);
+  const videos = [
+    { id: 0, image: "https://picsum.photos/seed/promo1/200/300", views: "110" },
+    { id: 1, image: "https://picsum.photos/seed/promo2/200/300", views: "170" },
+    { id: 2, image: "https://picsum.photos/seed/promo3/200/300", views: "272" },
+    { id: 3, image: "https://picsum.photos/seed/promo4/200/300", views: "95" },
+  ];
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 font-sans pb-24">
+      {/* Header */}
+      <header className="sticky top-0 bg-white z-20 border-b border-gray-100">
+        <div className="flex items-center justify-between px-4 py-3">
+          <button onClick={() => navigate(-1)} className="p-1 -ml-1">
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-lg font-bold">Promosi</h1>
+          <div className="w-8"></div> {/* Spacer */}
+        </div>
+        
+        {/* Tabs */}
+        <div className="flex px-4">
+          {['Buat', 'Dasbor', 'Milik Saya'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-3 text-sm font-medium relative ${
+                activeTab === tab ? 'text-black' : 'text-gray-500'
+              }`}
+            >
+              {tab}
+              {tab === 'Milik Saya' && (
+                <span className="absolute top-3 right-4 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+              )}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black mx-4"></div>
+              )}
+            </button>
+          ))}
+        </div>
+      </header>
+
       <div className="p-4 space-y-4">
         {/* Banner */}
-        <div className="bg-gradient-to-r from-orange-100 via-yellow-50 to-white rounded-xl p-4 relative overflow-hidden shadow-sm">
-          <div className="relative z-10">
-            <h2 className="font-bold text-lg leading-tight mb-1">
-              Ramadan Penuh Berkah<br />dari fitur Promosi TikTok
-            </h2>
-            <div className="flex items-center gap-1 text-xs text-gray-800">
-              <Flame size={12} className="text-orange-500 fill-orange-500" />
+        <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl p-4 relative overflow-hidden">
+          <div className="relative z-10 max-w-[70%]">
+            <h2 className="font-bold text-sm mb-1">Ramadan Penuh Berkah dari fitur Promosi TikTok</h2>
+            <div className="flex items-center gap-1 text-xs text-gray-600 mb-1">
+              <span className="text-[10px]">🔥</span>
               <span>Dapatkan kupon terbatas hingga Rp5.834.000</span>
             </div>
           </div>
-          {/* Decorative Elements */}
-          <div className="absolute top-2 right-4 text-yellow-400">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
-            </svg>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+            <Moon size={40} className="text-yellow-400 fill-yellow-400" />
+            <Star size={10} className="absolute -top-2 -left-2 text-yellow-400 fill-yellow-400 animate-pulse" />
+            <Star size={8} className="absolute bottom-0 -right-2 text-yellow-400 fill-yellow-400 animate-pulse delay-75" />
           </div>
-          <div className="absolute top-1 left-1 text-yellow-300 opacity-50 text-xs">★</div>
-          <div className="absolute bottom-2 right-12 text-yellow-300 opacity-50 text-xs">★</div>
         </div>
 
-        {/* Target Selection */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
+        {/* Target Section */}
+        <div className="bg-white rounded-xl p-4">
           <div className="flex items-center gap-1 mb-3">
-            <h3 className="font-bold text-base">Pilih target Anda</h3>
+            <h3 className="font-bold text-sm">Pilih target Anda</h3>
             <Info size={14} className="text-gray-400" />
           </div>
 
-          {/* Target Tabs */}
-          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4">
-            <button className="px-3 py-1.5 rounded border border-pink-500 text-pink-500 bg-pink-50 text-xs font-medium whitespace-nowrap">
-              Dapatkan penjualan
-            </button>
-            <button className="px-3 py-1.5 rounded border border-gray-200 text-gray-600 bg-white text-xs font-medium whitespace-nowrap">
-              Tingkatkan akun
-            </button>
-            <button className="px-3 py-1.5 rounded border border-gray-200 text-gray-600 bg-white text-xs font-medium whitespace-nowrap">
-              Tingkatkan LIVE
-            </button>
+          <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+            {['Dapatkan penjualan', 'Tingkatkan akun', 'Tingkatkan LIVE'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setTargetTab(tab)}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium border ${
+                  targetTab === tab 
+                    ? 'border-pink-500 text-pink-600 bg-pink-50' 
+                    : 'border-gray-200 text-gray-600 bg-gray-50'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
-          {/* Radio Options */}
           <div className="space-y-4">
             <label className="flex items-center justify-between cursor-pointer">
               <div className="flex items-center gap-3">
                 <ShoppingBag size={20} className="text-gray-500" />
                 <span className="text-sm font-medium">Lebih banyak pembelian produk</span>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedGoal === 'product_purchase' ? 'border-pink-500' : 'border-gray-300'}`}>
-                {selectedGoal === 'product_purchase' && <div className="w-2.5 h-2.5 bg-pink-500 rounded-full" />}
+              <div 
+                className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                  selectedGoal === 'product' ? 'border-pink-600' : 'border-gray-300'
+                }`}
+                onClick={() => setSelectedGoal('product')}
+              >
+                {selectedGoal === 'product' && <div className="w-3 h-3 bg-pink-600 rounded-full" />}
               </div>
-              <input 
-                type="radio" 
-                name="goal" 
-                className="hidden" 
-                checked={selectedGoal === 'product_purchase'} 
-                onChange={() => setSelectedGoal('product_purchase')} 
-              />
             </label>
 
             <label className="flex items-center justify-between cursor-pointer">
               <div className="flex items-center gap-3">
-                <LinkIcon size={20} className="text-gray-500" />
+                <Globe size={20} className="text-gray-500" />
                 <span className="text-sm font-medium">Lebih banyak kunjungan situs web</span>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedGoal === 'website_visits' ? 'border-pink-500' : 'border-gray-300'}`}>
-                {selectedGoal === 'website_visits' && <div className="w-2.5 h-2.5 bg-pink-500 rounded-full" />}
+              <div 
+                className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                  selectedGoal === 'website' ? 'border-pink-600' : 'border-gray-300'
+                }`}
+                onClick={() => setSelectedGoal('website')}
+              >
+                {selectedGoal === 'website' && <div className="w-3 h-3 bg-pink-600 rounded-full" />}
               </div>
-              <input 
-                type="radio" 
-                name="goal" 
-                className="hidden" 
-                checked={selectedGoal === 'website_visits'} 
-                onChange={() => setSelectedGoal('website_visits')} 
-              />
             </label>
           </div>
         </div>
 
-        {/* Ad Material Selection */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
+        {/* Creative Section */}
+        <div className="bg-white rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-base">Pilih materi iklan</h3>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <span>1 materi iklan</span>
-              <ChevronRight size={14} />
-            </div>
+            <h3 className="font-bold text-sm">Pilih materi iklan</h3>
+            <button className="text-xs text-gray-500 flex items-center">
+              1 materi iklan <ChevronRight size={14} />
+            </button>
           </div>
 
-          <div className="flex gap-3 overflow-x-auto no-scrollbar">
-            {[109, 169, 271, 50].map((views, index) => (
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            {videos.map((video) => (
               <div 
-                key={index} 
-                className="relative flex-shrink-0 w-24 aspect-[3/4] rounded-lg overflow-hidden cursor-pointer"
-                onClick={() => setSelectedAd(index)}
+                key={video.id} 
+                className="relative w-24 h-32 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer"
+                onClick={() => setSelectedVideo(video.id)}
               >
-                <img 
-                  src={`https://picsum.photos/seed/ad${index}/200/300`} 
-                  alt="Ad Thumbnail" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/10"></div>
-                
-                {/* Play Count */}
-                <div className="absolute bottom-1 left-1 flex items-center gap-0.5 text-white text-[10px] drop-shadow-md">
-                  <Play size={10} className="fill-white" />
-                  <span>{views}</span>
+                <img src={video.image} alt="" className="w-full h-full object-cover" />
+                <div className="absolute bottom-1 right-1 flex items-center text-white text-[10px] drop-shadow-md">
+                  <span className="mr-0.5">▷</span> {video.views}
                 </div>
-
-                {/* Selection Checkmark */}
-                {selectedAd === index && (
-                  <div className="absolute top-1 right-1 bg-pink-500 rounded-full text-white p-0.5">
-                    <CheckCircle2 size={16} />
+                {selectedVideo === video.id ? (
+                  <div className="absolute top-1 right-1 bg-pink-600 rounded-full p-0.5">
+                    <CheckCircle2 size={12} className="text-white" />
                   </div>
-                )}
-                {selectedAd !== index && (
-                  <div className="absolute top-1 right-1 w-4 h-4 rounded-full border border-white bg-black/20"></div>
+                ) : (
+                  <div className="absolute top-1 right-1 w-4 h-4 rounded-full border border-white/80"></div>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Custom Promotion */}
-        <div className="bg-white rounded-xl p-4 shadow-sm">
-          <h3 className="font-bold text-base mb-1">Promosi kustom</h3>
+        {/* Custom Promotion Section */}
+        <div className="bg-white rounded-xl p-4">
+          <h3 className="font-bold text-sm mb-1">Promosi kustom</h3>
           <p className="text-xs text-gray-500 mb-4">Hasil yang ditampilkan adalah perkiraan</p>
-          
-          <div className="bg-gray-50 rounded-lg p-4">
-             <div className="text-2xl font-bold text-center">
-               2 377 - 12 587
-             </div>
-             <div className="text-xs text-gray-400 text-center mt-1">
-               Perkiraan tayangan video
-             </div>
+
+          <div className="bg-gray-50 rounded-lg p-4 mb-4 text-center">
+            <div className="text-2xl font-bold mb-1">2.360 - 12.492</div>
+            <div className="text-xs text-gray-500">Tayangan video</div>
           </div>
-        </div>
-      </div>
-    </>
-  );
-}
 
-function CreateTabFooter() {
-  return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 flex items-center justify-between z-20">
-      <div className="flex items-center gap-1">
-        <span className="font-bold text-lg">Total Rp96.011</span>
-        <ChevronRight size={20} />
-      </div>
-      <button className="bg-pink-600 text-white font-bold px-8 py-3 rounded-md text-sm hover:bg-pink-700 active:bg-pink-800 transition-colors">
-        Bayar
-      </button>
-    </div>
-  );
-}
-
-function DashboardTabContent() {
-  return (
-    <div className="p-4 space-y-6">
-      {/* Overview Section */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-1">
-            <h2 className="font-bold text-base">Ikhtisar hasil</h2>
-            <Info size={14} className="text-gray-400" />
-          </div>
-          <Link to="/results-overview" className="flex items-center gap-1 text-xs text-gray-500">
-            <span>Lihat lainnya</span>
-            <ChevronRight size={14} />
-          </Link>
-        </div>
-
-        <div className="flex items-center justify-between mb-4">
-          <button className="flex items-center gap-1 text-sm font-medium">
-            28 hari terakhir <ChevronDown size={16} />
-          </button>
-          <div className="flex bg-gray-100 rounded-lg p-0.5 text-xs font-medium">
-            <button className="px-3 py-1 bg-white rounded shadow-sm">Video</button>
-            <button className="px-3 py-1 text-gray-500">LIVE</button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <StatCard label="Biaya iklan" value="Rp0" subValue="Rp0" />
-          <StatCard label="Tayangan video" value="0" subValue="0" />
-          <StatCard label="Pengikut baru" value="0" subValue="0" />
-          <StatCard label="Tayangan profil" value="0" subValue="0" />
-        </div>
-      </div>
-
-      {/* Order History Section */}
-      <div>
-        <h2 className="font-bold text-base mb-4">Riwayat pesanan</h2>
-        
-        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4">
-          {['Semua', 'Tertunda', 'Sedang Diperiksa', 'Aktif', 'Selesai'].map((tab, i) => (
-            <button 
-              key={i}
-              className={`px-3 py-1.5 rounded text-xs font-medium whitespace-nowrap ${
-                tab === 'Semua' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="space-y-4">
-          <div className="bg-white">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-bold text-sm">Selesai</span>
-              <span className="text-xs text-gray-500">Lebih banyak pembelian produk, 04/07/2025</span>
+          <div className="mb-6">
+            <div className="flex items-center gap-1 mb-3">
+              <span className="text-sm text-gray-600">Tentukan penonton Anda</span>
+              <Info size={14} className="text-gray-400" />
             </div>
             
-            <div className="flex gap-3">
-              <div className="w-20 h-24 bg-gray-100 rounded overflow-hidden flex-shrink-0 relative">
-                <img src="https://picsum.photos/seed/skincare/200/300" alt="Product" className="w-full h-full object-cover" />
-                <div className="absolute top-1 right-1 bg-pink-500 text-white text-[8px] px-1 rounded">Diskon 50%</div>
-              </div>
-              <div className="flex-1">
-                <div className="grid grid-cols-3 gap-2 mb-2">
-                  <div>
-                    <div className="text-[10px] text-gray-500">Biaya iklan</div>
-                    <div className="text-xs font-bold">Rp30 rb</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-gray-500">Tayangan video</div>
-                    <div className="text-xs font-bold">3,17 rb</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] text-gray-500">Pembelian produk</div>
-                    <div className="text-xs font-bold">3</div>
-                  </div>
+            <div className="space-y-4">
+              <label className="flex items-center justify-between cursor-pointer">
+                <span className="text-sm">Penonton bawaan (TikTok memilihkan untuk Anda)</span>
+                <div 
+                  className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                    audience === 'default' ? 'border-pink-600' : 'border-gray-300'
+                  }`}
+                  onClick={() => setAudience('default')}
+                >
+                  {audience === 'default' && <div className="w-3 h-3 bg-pink-600 rounded-full" />}
                 </div>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                  <VideoIcon size={12} />
-                  <span>video Goods Produk</span>
+              </label>
+
+              <label className="flex items-center justify-between cursor-pointer">
+                <span className="text-sm">Buat sendiri</span>
+                <ChevronRight size={16} className="text-gray-400" />
+              </label>
+              
+              <div className="flex justify-center">
+                 <button className="text-xs text-gray-500 flex items-center gap-1">
+                   Lihat lainnya <ChevronRight size={12} className="rotate-90" />
+                 </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <div className="flex items-center gap-1 mb-3">
+              <span className="text-sm text-gray-600">Atur anggaran dan durasi</span>
+              <Info size={14} className="text-gray-400" />
+            </div>
+
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Anggaran</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                 <span className="text-sm font-bold">Rp{budget.toLocaleString('id-ID')} Per hari</span>
+                 <Pencil size={12} className="text-gray-500" />
+              </div>
+              <input 
+                type="range" 
+                min="15000" 
+                max="1000000" 
+                step="1000"
+                value={budget}
+                onChange={(e) => setBudget(parseInt(e.target.value))}
+                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-pink-600"
+              />
+            </div>
+
+            <div className="bg-gray-50 p-3 rounded-lg flex gap-2 mb-4">
+              <ThumbsUp size={16} className="text-gray-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-gray-600">Anggaran dengan kemungkinan mencapai hasil yang diinginkan</p>
+            </div>
+
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Durasi</span>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                 <span className="text-sm font-bold">{duration} hari</span>
+              </div>
+              <input 
+                type="range" 
+                min="1" 
+                max="30" 
+                value={duration}
+                onChange={(e) => setDuration(parseInt(e.target.value))}
+                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-400"
+              />
+            </div>
+          </div>
+
+          <button className="w-full py-2.5 border border-gray-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2">
+            <ShoppingBag size={16} />
+            Pilih paket promosi
+          </button>
+        </div>
+
+        {/* Payment Methods */}
+        <div className="bg-white rounded-xl p-4">
+          <h3 className="font-bold text-sm mb-4">Bayar dengan</h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/1200px-Logo_dana_blue.svg.png" 
+                  alt="DANA" 
+                  className="w-8 h-8 object-contain"
+                />
+                <span className="text-sm">Dana</span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-500 text-sm">
+                Hubungkan <ChevronRight size={16} />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-50 rounded flex items-center justify-center text-blue-600">
+                  <Landmark size={18} />
                 </div>
-                <button className="bg-gray-100 text-xs font-medium px-3 py-1.5 rounded w-full">
-                  Lihat perincian
-                </button>
+                <span className="text-sm">Bank transfer</span>
               </div>
+              <ChevronRight size={16} className="text-gray-400" />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/2560px-Gopay_logo.svg.png" 
+                  alt="GoPay" 
+                  className="w-8 h-8 object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg";
+                    e.currentTarget.onerror = null; // Prevent infinite loop
+                  }}
+                />
+                <span className="text-sm">GoPay</span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-500 text-sm">
+                Hubungkan <ChevronRight size={16} />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-500">Metode pembayaran lainnya</span>
+                <div className="flex gap-2 items-center">
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/2560px-Shopee.svg.png" 
+                     className="h-4 object-contain" 
+                     alt="Shopee" 
+                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                   />
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/2560px-Logo_ovo_purple.svg.png" 
+                     className="h-3 object-contain" 
+                     alt="OVO" 
+                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                   />
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" 
+                     className="h-2.5 object-contain" 
+                     alt="Visa" 
+                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                   />
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/2560px-Mastercard-logo.svg.png" 
+                     className="h-3 object-contain" 
+                     alt="Mastercard" 
+                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                   />
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-gray-400" />
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
 
-function StatCard({ label, value, subValue }: { label: string, value: string, subValue: string }) {
-  return (
-    <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
-      <div className="text-xs text-gray-500 mb-1">{label}</div>
-      <div className="text-lg font-bold mb-1">{value}</div>
-      <div className="flex items-center gap-1 text-xs text-gray-400">
-        <ArrowUpCircle size={12} />
-        <span>{subValue}</span>
-      </div>
-    </div>
-  );
-}
-
-function MineTabContent() {
-  return (
-    <div className="p-4 space-y-4 bg-gray-50 min-h-[calc(100vh-120px)]">
-      {/* Account Section */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
-        <h2 className="font-bold text-base mb-4">Akun Anda</h2>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Wallet size={20} className="text-gray-500" />
-              <div>
-                <div className="text-sm font-medium">Pembayaran</div>
-                <div className="text-xs text-gray-500">Kredit iklan yang tersedia</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center justify-end gap-1 text-sm text-gray-500">
-                Rp0 <ChevronRight size={16} />
-              </div>
-              <div className="text-xs text-gray-400">Rp0</div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Ticket size={20} className="text-gray-500" />
-              <span className="text-sm font-medium">Kupon diskon</span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-gray-500">
-              Tidak ada <ChevronRight size={16} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Success Center */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-1">
-            <h2 className="font-bold text-base">Success Center</h2>
-            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-          </div>
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <span>Lebih banyak</span>
-            <ChevronRight size={14} />
-          </div>
-        </div>
-
-        <div className="border border-gray-100 rounded-lg p-3">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-sm pr-4">
-              Reward Ramadan: Habiskan Rp333340 dalam bentuk tunai untuk mendapatkan hingga Rp333340
-            </h3>
-            <div className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded text-[10px] text-gray-500 whitespace-nowrap">
-              <Clock size={10} />
-              <span>18 hari</span>
-            </div>
-          </div>
+        {/* Price Details */}
+        <div className="bg-white rounded-xl p-4">
+          <h3 className="font-bold text-sm mb-4">Detail harga</h3>
           
-          <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-            Habiskan Rp333340 dalam bentuk tunai untuk kampanye Ramadan 2026 dan dapatkan kupon DISKON 50% (nilai kupon maksimal Rp333340).
-          </p>
-          
-          <div className="text-xs mb-3">
-            <span className="text-pink-600 font-bold">Reward: DISKON 50%</span>
-            <span className="text-gray-500"> dan hemat hingga Rp333.340</span>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Subtotal</span>
+              <span>Rp{(budget * duration).toLocaleString('id-ID')}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600 flex items-center gap-1">
+                Indonesian PMSE VAT <Info size={12} />
+              </span>
+              <span>Rp{vat.toLocaleString('id-ID')}</span>
+            </div>
+            <div className="flex justify-between font-bold pt-2 border-t border-gray-100 mt-2">
+              <span>Total</span>
+              <span>Rp{total.toLocaleString('id-ID')}</span>
+            </div>
           </div>
+        </div>
 
-          <div className="flex justify-end">
-            <button className="bg-gray-100 text-xs font-medium px-3 py-1.5 rounded-full">
-              Gabung misi
-            </button>
-          </div>
+        {/* Terms */}
+        <div className="bg-white rounded-xl p-4">
+          <h3 className="font-bold text-sm mb-2">Ketentuan</h3>
+          <label className="flex gap-3 cursor-pointer">
+            <div 
+              className={`w-5 h-5 rounded-full border flex-shrink-0 flex items-center justify-center mt-0.5 ${
+                agreed ? 'bg-pink-600 border-pink-600' : 'border-gray-300'
+              }`}
+              onClick={() => setAgreed(!agreed)}
+            >
+              {agreed && <CheckCircle2 size={14} className="text-white" />}
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Saya menyetujui <span className="font-bold">Ketentuan Pembayaran</span> dan <span className="font-bold">Program Promosi TikTok</span>, <span className="font-bold">Kebijakan Iklan</span>, dan <span className="font-bold">Konfirmasi Penggunaan Musik</span>.
+            </p>
+          </label>
         </div>
       </div>
 
-      {/* Other Functions */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
-        <h2 className="font-bold text-base mb-4">Fungsi lain</h2>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <User size={20} className="text-gray-500" />
-              <span className="text-sm font-medium">Permintaan</span>
-            </div>
-            <ChevronRight size={16} className="text-gray-400" />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <VideoIcon size={20} className="text-gray-500" />
-              <span className="text-sm font-medium">Video afiliasi</span>
-            </div>
-            <ChevronRight size={16} className="text-gray-400" />
-          </div>
+      {/* Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex items-center justify-between z-30">
+        <div className="flex items-center gap-1 font-bold text-sm">
+          Total Rp{total.toLocaleString('id-ID')} <ChevronRight size={16} />
         </div>
+        <button className="bg-pink-600 text-white font-bold text-sm px-8 py-2.5 rounded-lg">
+          Bayar
+        </button>
       </div>
     </div>
   );

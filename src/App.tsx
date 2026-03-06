@@ -20,6 +20,7 @@ import MessageDetail from './pages/MessageDetail';
 import NotificationList from './pages/NotificationList';
 import Shop from './pages/Shop';
 import ShopOrders from './pages/ShopOrders';
+import ManageProducts from './pages/ManageProducts';
 import BottomNav from './components/BottomNav';
 import PullToRefresh from './components/PullToRefresh';
 import { MessageProvider } from './context/MessageContext';
@@ -66,6 +67,7 @@ export default function App() {
               
               <Route path="/shop" element={<Shop />} />
               <Route path="/shop/orders" element={<ShopOrders />} />
+              <Route path="/manage-products" element={<ManageProducts />} />
               
               {/* Placeholders */}
               <Route path="/manage-products" element={<Placeholder title="Kelola Produk" />} />

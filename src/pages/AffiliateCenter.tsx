@@ -6,7 +6,19 @@ import {
   ShoppingBag, 
   Wallet, 
   Megaphone,
-  PlaySquare
+  PlaySquare,
+  Siren,
+  Smartphone,
+  Camera,
+  Shirt,
+  Video,
+  Moon,
+  Star,
+  Ticket,
+  Home,
+  Flame,
+  Watch,
+  Play
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useMemo } from 'react';
@@ -68,8 +80,8 @@ export default function AffiliateCenter() {
   };
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
-      <div className="min-h-screen bg-white font-sans pb-10">
+    <>
+      <div className="min-h-screen bg-white font-sans pb-24">
         {/* Header */}
         <header className="sticky top-0 bg-white z-10 flex justify-between items-center px-4 py-3">
           <Link to="/profile" className="p-1 -ml-1">
@@ -186,27 +198,180 @@ export default function AffiliateCenter() {
           </div>
 
           {/* Promo Banner */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h2 className="text-lg font-bold mb-3">Promo besar bulan ini</h2>
-            <div className="bg-gradient-to-r from-yellow-900 to-yellow-700 rounded-xl p-4 text-white relative overflow-hidden h-32 flex items-center">
-              <div className="z-10 relative flex items-center gap-2">
-                 <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm">
-                   <PlaySquare size={20} className="text-white" />
-                 </div>
-                 <span className="font-bold text-sm">Buat sekarang</span>
+            <div className="bg-gradient-to-r from-green-900 to-green-700 rounded-xl p-5 text-white relative overflow-hidden min-h-[180px] flex flex-col justify-center">
+              {/* Top Label */}
+              <div className="absolute top-4 left-5 z-10">
+                 <div className="text-[10px] font-medium opacity-90 leading-none">TikTok Shop</div>
+                 <div className="text-[8px] opacity-75 leading-none mt-0.5">by tokopedia</div>
               </div>
-              <div className="absolute bottom-2 right-2 text-[10px] text-yellow-200 font-medium bg-black/30 px-2 py-0.5 rounded">
-                Mau Tahu Caranya Dapetin
+
+              <div className="z-10 relative max-w-[65%] mt-6">
+                 <h3 className="font-bold text-lg leading-tight mb-2">
+                   Perluas jangkauan di bulan Ramadan ini dengan fitur Promosi!
+                 </h3>
+                 <p className="text-[10px] opacity-90 mb-4 leading-relaxed">
+                   Dapatkan kupon terbatas hingga Rp5.834.000, Gunakan fitur Promosi untuk memaksimalkan kinerja konten dan mengembangkan komunitas Anda selama Ramadan ini.
+                 </p>
+                 <button className="bg-pink-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-sm">
+                   Promosi sekarang
+                 </button>
               </div>
-              {/* Decorative lanterns/elements */}
-              <div className="absolute right-4 top-0 text-yellow-500 opacity-50">
-                 <div className="w-8 h-16 border border-yellow-500 rounded-b-full mx-auto"></div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -right-6 top-1/2 -translate-y-1/2 opacity-100">
+                 <Moon size={110} className="text-yellow-400 fill-yellow-400 drop-shadow-lg" />
+              </div>
+              <div className="absolute right-24 top-8">
+                 <Star size={14} className="text-yellow-200 fill-yellow-200 animate-pulse" />
+              </div>
+              <div className="absolute right-10 bottom-10">
+                 <Star size={18} className="text-yellow-200 fill-yellow-200 animate-pulse delay-75" />
+              </div>
+               <div className="absolute right-6 top-6">
+                 <Star size={10} className="text-yellow-200 fill-yellow-200 animate-pulse delay-150" />
               </div>
             </div>
           </div>
+
+          {/* Creator Opportunities */}
+          <div className="mb-6">
+            <h2 className="text-lg font-bold mb-3">Peluang kreator</h2>
+            <div className="border border-gray-200 rounded-xl overflow-hidden">
+              
+              {/* Item 1 */}
+              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Siren size={20} className="text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">Hadiah THR Hampir Hangus!</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1 bg-pink-50 px-1.5 py-0.5 rounded text-[10px] text-pink-600 font-medium">
+                        <span className="w-3 h-3 bg-pink-200 rounded-full flex items-center justify-center text-[8px]">$</span>
+                        Daftar & raih THR!
+                      </div>
+                      <div className="flex items-center gap-1 bg-red-50 px-1.5 py-0.5 rounded text-[10px] text-red-600 font-medium">
+                        <Ticket size={10} />
+                        Umroh
+                      </div>
+                      <div className="flex items-center gap-1 bg-red-50 px-1.5 py-0.5 rounded text-[10px] text-red-600 font-medium">
+                        <Smartphone size={10} />
+                        iPhone
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button className="bg-gray-100 text-black text-xs font-bold px-4 py-1.5 rounded-full">
+                  Ikuti
+                </button>
+              </div>
+
+              {/* Item 2 */}
+              <div className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Shirt size={20} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">Fashion Week: 600JT Cash!</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-1 bg-gray-100 px-1.5 py-0.5 rounded text-[10px] text-gray-600 font-medium">
+                        <span className="text-xs">🎉</span>
+                        Selesaikan tugasmu!
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button className="bg-gray-100 text-black text-xs font-bold px-4 py-1.5 rounded-full">
+                  Klaim
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          {/* New: Fashion Komisi */}
+          <div className="border border-gray-200 rounded-xl p-4 mb-6">
+            <h3 className="font-bold text-base mb-3">Fashion Komisi +10% & iPhone</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Flame size={20} className="text-red-600 fill-red-600" />
+                </div>
+                <div>
+                  <div className="font-medium text-sm">Ekstra Komisi+Vouc...</div>
+                  <div className="flex gap-1 mt-1">
+                    <span className="bg-pink-50 text-pink-600 text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Smartphone size={10} /> iP...
+                    </span>
+                    <span className="bg-pink-50 text-pink-600 text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <Watch size={10} /> Apple Wa...
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button className="bg-gray-100 text-black text-xs font-bold px-6 py-1.5 rounded-full">
+                Ikuti
+              </button>
+            </div>
+          </div>
+
+          {/* New: Belajar dari para kreator */}
+          <div className="border border-gray-200 rounded-xl p-4 mb-6">
+            <h3 className="font-bold text-base mb-3">Belajar dari para kreator</h3>
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-100">
+                  <img src={`https://picsum.photos/seed/food${i}/200/300`} className="w-full h-full object-cover" alt="Creator" />
+                  <div className="absolute bottom-1 left-1 flex items-center gap-0.5 text-white text-[10px] font-medium drop-shadow-md">
+                    <Play size={10} className="fill-white" /> {10 + i * 10}M
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">Tonton kreator terbaik mem...</span>
+              <button className="bg-gray-100 text-black text-xs font-bold px-6 py-1.5 rounded-full">
+                Tonton
+              </button>
+            </div>
+          </div>
+
+          {/* New: Kinerja akun */}
+          <div className="mb-24">
+            <h2 className="text-lg font-bold mb-2">Kinerja akun</h2>
+            <div className="flex items-center gap-1 text-sm mb-1">
+              <span>Rating Kinerja Kreator:</span>
+              <span className="text-green-600 font-medium flex items-center cursor-pointer">Baik <ChevronRight size={14} /></span>
+            </div>
+            <p className="text-xs text-gray-500">Kinerja akun Anda baik</p>
+          </div>
+        </div>
+
+        {/* Floating Button */}
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-20">
+          <button className="bg-white text-black font-bold text-sm px-5 py-2.5 rounded-full shadow-lg border border-gray-200 flex items-center gap-2">
+            <Video size={18} className="fill-black" />
+            Buat sekarang
+          </button>
+        </div>
+
+        {/* Bottom Nav */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-16 py-2 pb-4 flex justify-between items-center z-30">
+           <button className="flex flex-col items-center gap-1 text-pink-600">
+             <Home size={24} className="fill-pink-600" />
+             <span className="text-[10px] font-medium">Beranda</span>
+           </button>
+           <button className="flex flex-col items-center gap-1 text-gray-500">
+             <PlaySquare size={24} />
+             <span className="text-[10px] font-medium">Video</span>
+           </button>
         </div>
       </div>
-    </PullToRefresh>
+    </>
   );
 }
 

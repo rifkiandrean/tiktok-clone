@@ -2,11 +2,13 @@ import { ArrowLeft, MoreHorizontal, ChevronRight, Info } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PullToRefresh from '../components/PullToRefresh';
+import { useData } from '../context/DataContext';
 
 export default function Withdraw() {
   const navigate = useNavigate();
+  const { balance, updateBalance, addTransaction } = useData();
   const [amount, setAmount] = useState('');
-  const balance = 487922000;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleRefresh = async () => {
     // Simulate network request
@@ -14,7 +16,7 @@ export default function Withdraw() {
   };
 
   const handleWithdrawAll = () => {
-    setAmount(balance.toString());
+    setAmount(balance.toLocaleString('id-ID'));
   };
 
   const formatInput = (value: string) => {
@@ -27,6 +29,32 @@ export default function Withdraw() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatInput(e.target.value);
     setAmount(formatted);
+  };
+
+  const handleSubmit = async () => {
+    const numericAmount = parseInt(amount.replace(/\D/g, ''));
+    if (!numericAmount || numericAmount <= 0) {
+      alert("Masukkan jumlah penarikan yang valid.");
+      return;
+    }
+    if (numericAmount > balance) {
+      alert("Saldo tidak mencukupi.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const newBalance = balance - numericAmount;
+      await updateBalance(newBalance);
+      await addTransaction(new Date(), numericAmount, 1, 'withdrawal');
+      alert("Penarikan berhasil diproses!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Error processing withdrawal:", error);
+      alert("Terjadi kesalahan saat memproses penarikan.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -104,8 +132,12 @@ export default function Withdraw() {
           <p className="text-[10px] text-gray-500 text-center mb-4 leading-relaxed">
             Transaksi pembayaran diproses oleh PIPO. Dengan melanjutkan, Anda menyatakan bahwa Anda menyetujui <span className="font-bold text-black">Kebijakan Privasi PIPO</span>.
           </p>
-          <button className="w-full bg-green-500 text-white font-bold py-3 rounded-md text-sm hover:bg-green-600 active:bg-green-700 transition-colors">
-            Kirim
+          <button 
+            onClick={handleSubmit}
+            disabled={isSubmitting || !amount}
+            className="w-full bg-green-500 text-white font-bold py-3 rounded-md text-sm hover:bg-green-600 active:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          >
+            {isSubmitting ? 'Memproses...' : 'Kirim'}
           </button>
         </div>
       </div>

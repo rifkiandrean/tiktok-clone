@@ -280,7 +280,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
       // "Penarikan" usually appears in the list.
       // If I use `${dateStr}_${type}` as ID, it allows both on same day.
       
-      const idStr = type === 'daily_income' ? date.toISOString().split('T')[0] : `${date.toISOString().split('T')[0]}_withdraw`;
+      const idStr = type === 'daily_income' 
+        ? date.toISOString().split('T')[0] 
+        : `${date.toISOString().split('T')[0]}_withdraw_${Date.now()}`;
       
       const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       
